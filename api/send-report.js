@@ -6,10 +6,9 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const N8N_REPORT_URL = process.env.N8N_REPORT_URL || process.env.N8N_WEBHOOK_URL?.replace('/invoice', '/send-report');
+  const N8N_REPORT_URL = process.env.N8N_REPORT_URL;
 
   if (!N8N_REPORT_URL) {
-    // Graceful fallback — report queued
     return res.status(200).json({ queued: true });
   }
 
@@ -21,6 +20,6 @@ export default async function handler(req, res) {
     });
     return res.status(200).json({ sent: true });
   } catch (err) {
-    return res.status(200).json({ queued: true }); // Don't fail loudly for email
+    return res.status(200).json({ queued: true });
   }
 }
